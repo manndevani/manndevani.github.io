@@ -279,6 +279,151 @@ body::after {
   .hint-txt  { font-size:.56rem;letter-spacing:.15em; }
 }
 
+/* ── CINEMATIC INTRO ── */
+#intro {
+  position:fixed;inset:0;z-index:9999;
+  background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  pointer-events:none;
+  transition:opacity .8s ease;
+}
+#intro.fade { opacity:0; }
+#intro.gone { display:none; }
+.intro-sub  { font-family:'Rajdhani',sans-serif;font-size:.7rem;letter-spacing:.4em;
+              color:rgba(245,197,24,.5);text-transform:uppercase; }
+.intro-name { font-family:'Oswald',sans-serif;font-size:clamp(2rem,8vw,5rem);
+              letter-spacing:.15em;color:var(--gold);
+              text-shadow:0 0 40px rgba(245,197,24,.6),0 0 80px rgba(245,197,24,.2);
+              opacity:0;transform:translateY(16px);
+              transition:opacity .6s .3s, transform .6s .3s; }
+#intro.reveal .intro-name { opacity:1;transform:none; }
+.intro-bar-wrap { width:min(220px,50vw);height:2px;background:rgba(255,255,255,.08); }
+.intro-bar { height:100%;width:0%;background:var(--gold);
+             box-shadow:0 0 8px var(--gold);
+             transition:width 1.8s cubic-bezier(.4,0,.2,1); }
+#intro.reveal .intro-bar { width:100%; }
+.intro-loc { font-family:'Rajdhani',sans-serif;font-size:.6rem;letter-spacing:.3em;
+             color:rgba(255,255,255,.35);text-transform:uppercase;
+             opacity:0;transition:opacity .5s .8s; }
+#intro.reveal .intro-loc { opacity:1; }
+
+/* ── CUSTOM CURSOR ── */
+body { cursor:none; }
+#cursor {
+  position:fixed;z-index:8000;pointer-events:none;
+  width:32px;height:32px;
+  transform:translate(-50%,-50%);
+  transition:transform .08s;
+}
+#cursor svg { width:100%;height:100%; }
+#cursor.clicking { transform:translate(-50%,-50%) scale(.85); }
+@media (hover:none) { body { cursor:auto; } #cursor { display:none; } }
+
+/* ── TOOLTIP ── */
+#tooltip {
+  position:fixed;z-index:6000;pointer-events:none;
+  background:rgba(4,5,10,.95);
+  border:1px solid rgba(245,197,24,.3);
+  border-left:3px solid var(--gold);
+  padding:5px 10px;
+  font-family:'Rajdhani',sans-serif;font-size:.65rem;
+  letter-spacing:.1em;color:#fff;text-transform:uppercase;
+  opacity:0;transform:translateY(4px);
+  transition:opacity .2s,transform .2s;
+  white-space:nowrap;
+}
+#tooltip.show { opacity:1;transform:translateY(0); }
+
+/* ── MINIMAP ── */
+#minimap {
+  position:fixed;bottom:16px;right:16px;z-index:300;
+  width:90px;height:90px;
+  border:1.5px solid rgba(245,197,24,.35);
+  border-radius:4px;
+  background:rgba(4,6,12,.85);
+  overflow:hidden;
+  box-shadow:0 0 12px rgba(0,0,0,.8);
+}
+#minimap canvas { width:100%;height:100%; }
+.minimap-label {
+  position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
+  font-family:'Rajdhani',sans-serif;font-size:.38rem;letter-spacing:.2em;
+  color:rgba(245,197,24,.45);text-transform:uppercase;white-space:nowrap;
+}
+@media (max-width:700px) {
+  #minimap { width:70px;height:70px;bottom:10px;right:10px; }
+}
+
+/* ── HEALTH / XP BAR ── */
+.stat-bars {
+  position:fixed;top:54px;left:14px;z-index:200;
+  display:flex;flex-direction:column;gap:4px;
+}
+.stat-row {
+  display:flex;align-items:center;gap:6px;
+}
+.stat-lbl {
+  font-family:'Rajdhani',sans-serif;font-size:.4rem;letter-spacing:.25em;
+  color:rgba(255,255,255,.35);text-transform:uppercase;width:18px;
+}
+.stat-track {
+  width:90px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;
+  overflow:hidden;
+}
+.stat-fill {
+  height:100%;border-radius:2px;transition:width .4s ease;
+}
+.stat-fill.hp  { background:linear-gradient(90deg,#e03,#ff6b1a);box-shadow:0 0 6px #e03; width:78%; }
+.stat-fill.xp  { background:linear-gradient(90deg,#f5c518,#ffe066);box-shadow:0 0 6px #f5c518; width:62%; }
+@media (max-width:700px) {
+  .stat-bars { top:44px;left:8px; }
+  .stat-track { width:70px; }
+}
+
+/* ── WANTED STARS ANIMATION ── */
+.wanted { position:fixed;top:14px;right:14px;z-index:200;
+  display:flex;gap:3px;align-items:center;
+  background:rgba(0,0,0,.8);border:1px solid rgba(245,197,24,.18);padding:5px 10px; }
+.star { color:var(--gold);font-size:.76rem;opacity:.18;transition:opacity .3s,text-shadow .3s; }
+.star.lit { opacity:1;text-shadow:0 0 8px var(--gold); }
+.star.pulse { animation:star-pulse .4s ease; }
+@keyframes star-pulse {
+  0%   { transform:scale(1); }
+  40%  { transform:scale(1.5); }
+  100% { transform:scale(1); }
+}
+
+/* ── KONAMI EASTER EGG ── */
+#konami {
+  position:fixed;inset:0;z-index:9998;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.92);
+  opacity:0;pointer-events:none;
+  transition:opacity .4s;
+}
+#konami.show { opacity:1;pointer-events:all; }
+.konami-title {
+  font-family:'Oswald',sans-serif;font-size:clamp(1.4rem,5vw,3rem);
+  letter-spacing:.2em;color:var(--gold);
+  text-shadow:0 0 30px rgba(245,197,24,.7);
+  animation:glitch 3s infinite;
+}
+.konami-sub {
+  font-family:'Rajdhani',sans-serif;font-size:.75rem;letter-spacing:.3em;
+  color:rgba(255,255,255,.5);text-transform:uppercase;margin-top:12px;
+}
+.konami-close {
+  margin-top:28px;font-family:'Rajdhani',sans-serif;font-size:.65rem;
+  letter-spacing:.3em;color:rgba(245,197,24,.6);text-transform:uppercase;cursor:pointer;
+  border:1px solid rgba(245,197,24,.3);padding:6px 18px;
+}
+@keyframes glitch {
+  0%,95%,100% { text-shadow:0 0 30px rgba(245,197,24,.7); transform:none; }
+  96% { text-shadow:-3px 0 #f00,3px 0 #0ff; transform:skewX(-4deg); }
+  97% { text-shadow:3px 0 #f00,-3px 0 #0ff; transform:skewX(2deg); }
+  98% { text-shadow:0 0 30px rgba(245,197,24,.7); transform:none; }
+}
+
 /* float keyframes — simple translateY, won't interfere with transform */
 @keyframes fb0{0%,100%{margin-top:calc(var(--bh)/-2 + 0px)}  50%{margin-top:calc(var(--bh)/-2 - 7px)}}
 @keyframes fb1{0%,100%{margin-top:calc(var(--bh)/-2 + 0px)}  50%{margin-top:calc(var(--bh)/-2 - 9px)}}
@@ -296,6 +441,36 @@ body::after {
 
 <canvas id="bgCanvas"></canvas>
 
+<!-- CINEMATIC INTRO -->
+<div id="intro">
+  <div class="intro-sub">Loading</div>
+  <div class="intro-name">Mann Y Devani</div>
+  <div class="intro-bar-wrap"><div class="intro-bar" id="introBar"></div></div>
+  <div class="intro-loc">India · Portfolio</div>
+</div>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor">
+  <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="16" y1="2"  x2="16" y2="12" stroke="#f5c518" stroke-width="1.5"/>
+    <line x1="16" y1="20" x2="16" y2="30" stroke="#f5c518" stroke-width="1.5"/>
+    <line x1="2"  y1="16" x2="12" y2="16" stroke="#f5c518" stroke-width="1.5"/>
+    <line x1="20" y1="16" x2="30" y2="16" stroke="#f5c518" stroke-width="1.5"/>
+    <circle cx="16" cy="16" r="3.5" stroke="#f5c518" stroke-width="1.2"/>
+    <circle cx="16" cy="16" r="1.2" fill="#f5c518"/>
+  </svg>
+</div>
+
+<!-- TOOLTIP -->
+<div id="tooltip"></div>
+
+<!-- KONAMI EASTER EGG -->
+<div id="konami">
+  <div class="konami-title">CHEAT CODE ACTIVATED</div>
+  <div class="konami-sub">5 Star Wanted Level Unlocked 🌟</div>
+  <div class="konami-close" id="konamiClose">[ press any key to continue ]</div>
+</div>
+
 <div class="hc htl"></div><div class="hc htr"></div>
 <div class="hc hbl"></div><div class="hc hbr"></div>
 
@@ -303,8 +478,27 @@ body::after {
   <div class="np-lbl">Player</div>
   <div class="np-name">Mann Y Devani</div>
 </div>
-<div class="wanted">
-  <span class="star lit">★</span><span class="star lit">★</span><span class="star lit">★</span><span class="star">★</span><span class="star">★</span>
+
+<!-- HEALTH / XP BARS -->
+<div class="stat-bars">
+  <div class="stat-row">
+    <span class="stat-lbl">HP</span>
+    <div class="stat-track"><div class="stat-fill hp" id="hpBar"></div></div>
+  </div>
+  <div class="stat-row">
+    <span class="stat-lbl">XP</span>
+    <div class="stat-track"><div class="stat-fill xp" id="xpBar"></div></div>
+  </div>
+</div>
+
+<div class="wanted" id="wantedBar">
+  <span class="star" id="s1">★</span><span class="star" id="s2">★</span><span class="star" id="s3">★</span><span class="star" id="s4">★</span><span class="star" id="s5">★</span>
+</div>
+
+<!-- MINIMAP -->
+<div id="minimap">
+  <canvas id="mmCanvas"></canvas>
+  <div class="minimap-label">India</div>
 </div>
 
 <div class="hint-wrap" id="hintWrap">
@@ -7035,6 +7229,310 @@ document.getElementById('hoverZone').addEventListener('touchend', e => {
 
   resize();
   requestAnimationFrame(draw);
+})();
+
+// ── CINEMATIC INTRO ──
+(function(){
+  const intro = document.getElementById('intro');
+  const bar   = document.getElementById('introBar');
+  requestAnimationFrame(() => {
+    intro.classList.add('reveal');
+    setTimeout(() => {
+      intro.classList.add('fade');
+      setTimeout(() => intro.classList.add('gone'), 900);
+    }, 2200);
+  });
+})();
+
+// ── CUSTOM CURSOR ──
+(function(){
+  const cur = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+  });
+  document.addEventListener('mousedown', () => cur.classList.add('clicking'));
+  document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
+})();
+
+// ── WANTED STARS — fill up on hover ──
+(function(){
+  const stars = [1,2,3,4,5].map(i => document.getElementById('s'+i));
+  let current = 3; // default 3 lit
+
+  function setStars(n, animate) {
+    stars.forEach((s, i) => {
+      const lit = i < n;
+      s.classList.toggle('lit', lit);
+      if (animate && lit && i >= current) {
+        s.classList.remove('pulse');
+        void s.offsetWidth;
+        s.classList.add('pulse');
+      }
+    });
+    current = n;
+  }
+
+  setStars(3, false);
+
+  const unit = document.getElementById('charUnit');
+  unit.addEventListener('mouseenter', () => setStars(5, true));
+  unit.addEventListener('mouseleave', () => setStars(3, false));
+
+  // also on mobile grid open
+  document.getElementById('charUnit').addEventListener('touchend', () => {
+    setStars(5, true);
+    setTimeout(() => setStars(3, false), 2000);
+  });
+})();
+
+// ── BUBBLE STAGGER — already built into delay, but add entrance class ──
+// bubbles already stagger via transition-delay set in build()
+
+// ── TOOLTIP on bubble hover ──
+(function(){
+  const tip = document.getElementById('tooltip');
+  const DESCS = {
+    'GitHub':     'View source code & projects',
+    'LinkedIn':   'Professional network',
+    'YouTube':    'Videos & content',
+    'Portfolio':  'Full portfolio site',
+    'Book':       'Life To Death — published work',
+    'Itch.io':    'Games & experiments',
+    'DeviantArt': 'Art gallery',
+    'Fab':        'Game assets & marketplace',
+    'Linktree':   'All links in one place',
+    'Resume':     'Download CV',
+  };
+
+  document.addEventListener('mouseover', e => {
+    const bub = e.target.closest('.bubble');
+    if (!bub) { tip.classList.remove('show'); return; }
+    const lbl = bub.querySelector('.b-label');
+    if (!lbl) return;
+    const desc = DESCS[lbl.textContent.trim()] || '';
+    if (!desc) return;
+    tip.textContent = desc;
+    tip.classList.add('show');
+  });
+  document.addEventListener('mousemove', e => {
+    tip.style.left = (e.clientX + 14) + 'px';
+    tip.style.top  = (e.clientY - 10) + 'px';
+  });
+  document.addEventListener('mouseout', e => {
+    if (!e.target.closest('.bubble')) tip.classList.remove('show');
+  });
+})();
+
+// ── MINIMAP ──
+(function(){
+  const mm  = document.getElementById('minimap');
+  const cvs = document.getElementById('mmCanvas');
+  const ctx = cvs.getContext('2d');
+  let blipT = 0;
+
+  function resizeMM() {
+    cvs.width  = mm.offsetWidth;
+    cvs.height = mm.offsetHeight;
+  }
+  resizeMM();
+  window.addEventListener('resize', resizeMM);
+
+  // Static street grid
+  function drawMM(ts) {
+    const W = cvs.width, H = cvs.height;
+    ctx.clearRect(0,0,W,H);
+
+    // BG
+    ctx.fillStyle = '#060810';
+    ctx.fillRect(0,0,W,H);
+
+    // Street grid
+    ctx.strokeStyle = 'rgba(245,197,24,.12)';
+    ctx.lineWidth = 1;
+    const streets = [
+      [0,H*.3,W,H*.3],[0,H*.55,W,H*.55],[0,H*.75,W,H*.75],
+      [W*.2,0,W*.2,H],[W*.45,0,W*.45,H],[W*.7,0,W*.7,H],[W*.88,0,W*.88,H],
+    ];
+    streets.forEach(([x1,y1,x2,y2]) => {
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    });
+
+    // Park block
+    ctx.fillStyle = 'rgba(30,60,20,.5)';
+    ctx.fillRect(W*.45,H*.3,W*.25,H*.25);
+
+    // Water
+    ctx.fillStyle = 'rgba(10,30,80,.6)';
+    ctx.fillRect(0,H*.75,W*.2,H*.25);
+
+    // Player blip — pulsing gold dot
+    blipT += .04;
+    const bx = W*.45, by = H*.45;
+    const pulse = .5 + .5 * Math.sin(blipT * 3);
+    ctx.beginPath();
+    ctx.arc(bx, by, 3 + pulse*2, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(245,197,24,${.15 * pulse})`;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(bx, by, 3, 0, Math.PI*2);
+    ctx.fillStyle = '#f5c518';
+    ctx.fill();
+
+    // North indicator
+    ctx.fillStyle = 'rgba(245,197,24,.6)';
+    ctx.font = 'bold 7px Rajdhani,sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('N', W-3, 9);
+
+    requestAnimationFrame(drawMM);
+  }
+  requestAnimationFrame(drawMM);
+})();
+
+// ── CANVAS: heavier rain + car headlights ──
+// (injected into the existing canvas draw loop via monkey-patching not needed —
+//  car headlights are added to the DROPS system below by extending the canvas IIFE above)
+
+// ── CAR HEADLIGHTS on ground ──
+(function(){
+  const cvs = document.getElementById('bgCanvas');
+  const ctx = cvs.getContext('2d');
+
+  const CARS = Array.from({length:5}, (_, i) => ({
+    x:    Math.random(),
+    y:    0.915 + Math.random() * .04,
+    spd:  (.0008 + Math.random()*.0015) * (Math.random()<.5?1:-1),
+    gap:  0.04 + Math.random()*.02,
+    col:  Math.random()<.7 ? '#fff8e0' : '#ffe0b0',
+    tail: Math.random()<.5 ? '#ff2200' : '#cc1100',
+    phase: i * .4,
+  }));
+
+  function drawCars() {
+    const W = cvs.width, H = cvs.height;
+    CARS.forEach(c => {
+      c.x += c.spd;
+      if (c.x > 1.1)  c.x = -0.1;
+      if (c.x < -0.1) c.x = 1.1;
+
+      const cx = c.x * W;
+      const cy = c.y * H;
+      const dir = c.spd > 0 ? 1 : -1;
+      const g2  = c.gap * W;
+
+      // headlights (front)
+      const front = dir > 0 ? cx + g2/2 : cx - g2/2;
+      [-1,1].forEach(s => {
+        const hx = front + s * 3;
+        const beam = ctx.createRadialGradient(hx, cy, 0, hx + dir*30, cy-4, 40);
+        beam.addColorStop(0,   c.col.replace(')',',0.18)').replace('rgb','rgba'));
+        beam.addColorStop(1,   'transparent');
+        ctx.fillStyle = beam;
+        ctx.fillRect(hx-40, cy-20, 80, 24);
+        ctx.beginPath();
+        ctx.arc(hx, cy, 1.5, 0, Math.PI*2);
+        ctx.fillStyle = c.col;
+        ctx.globalAlpha = .9;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+
+      // tail lights (rear)
+      const rear = dir > 0 ? cx - g2/2 : cx + g2/2;
+      [-1,1].forEach(s => {
+        const tx = rear + s * 3;
+        ctx.beginPath();
+        ctx.arc(tx, cy, 1.2, 0, Math.PI*2);
+        ctx.fillStyle = c.tail;
+        ctx.globalAlpha = .7;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+    });
+    requestAnimationFrame(drawCars);
+  }
+  requestAnimationFrame(drawCars);
+})();
+
+// ── SOUND EFFECTS (Web Audio API — no files needed) ──
+(function(){
+  let ctx;
+  function getCtx() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    return ctx;
+  }
+
+  function blip(freq=880, dur=0.06, vol=0.08, type='sine') {
+    try {
+      const ac  = getCtx();
+      const osc = ac.createOscillator();
+      const gain= ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = type; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + dur);
+      osc.start(); osc.stop(ac.currentTime + dur);
+    } catch(e){}
+  }
+
+  function whoosh() {
+    try {
+      const ac   = getCtx();
+      const buf  = ac.createBuffer(1, ac.sampleRate*.15, ac.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * (1 - i/data.length);
+      const src  = ac.createBufferSource();
+      const gain = ac.createGain();
+      const filt = ac.createBiquadFilter();
+      src.buffer = buf; filt.type='bandpass'; filt.frequency.value=1200;
+      src.connect(filt); filt.connect(gain); gain.connect(ac.destination);
+      gain.gain.setValueAtTime(.06, ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001, ac.currentTime + .15);
+      src.start();
+    } catch(e){}
+  }
+
+  // hover on bubble → blip
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest('.bubble')) blip(660, .05, .06);
+  });
+
+  // click bubble → whoosh
+  document.addEventListener('click', e => {
+    if (e.target.closest('.bubble') || e.target.closest('.mob-btn')) whoosh();
+  });
+
+  // hover enter char → low hum blip
+  document.getElementById('charUnit').addEventListener('mouseenter', () => blip(220, .12, .05, 'triangle'));
+  document.getElementById('charUnit').addEventListener('touchend', () => blip(220, .12, .05, 'triangle'));
+})();
+
+// ── KONAMI CODE EASTER EGG ──
+(function(){
+  const SEQ = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let idx = 0;
+  const panel = document.getElementById('konami');
+  const close = document.getElementById('konamiClose');
+
+  document.addEventListener('keydown', e => {
+    if (e.key === SEQ[idx]) {
+      idx++;
+      if (idx === SEQ.length) {
+        idx = 0;
+        panel.classList.add('show');
+        // 5-star wanted
+        [1,2,3,4,5].forEach((n,i) => {
+          const s = document.getElementById('s'+n);
+          setTimeout(()=>{ s.classList.add('lit','pulse'); }, i*120);
+        });
+      }
+    } else { idx = 0; }
+  });
+
+  function closeKonami() { panel.classList.remove('show'); }
+  close.addEventListener('click', closeKonami);
+  document.addEventListener('keydown', e => { if (panel.classList.contains('show') && e.key === 'Escape') closeKonami(); });
 })();
 </script>
 </body>
