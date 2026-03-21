@@ -6873,7 +6873,6 @@ const LINKS = [
   { label:'GitHub',     sub:'code',       url:'https://github.com/Mann763',                                                                       icon:'🐙', color:'#58a6ff', bg:'rgba(8,14,22,.93)'   },
   { label:'LinkedIn',   sub:'connect',    url:'https://linkedin.com/in/manndevani',                                                                icon:'💼', color:'#1ad4ff', bg:'rgba(5,20,45,.93)'   },
   { label:'YouTube',    sub:'videos',     url:'https://www.youtube.com/@MannDevani',                                                               icon:'▶',  color:'#ff4444', bg:'rgba(30,4,4,.93)'    },
-  { label:'Portfolio',  sub:'work',       url:'https://manndevani1.wixsite.com/oasis',                                                             icon:'🌐', color:'#f5c518', bg:'rgba(20,16,4,.93)'   },
   { label:'Book',       sub:'published',  url:'https://www.google.co.in/books/edition/Life_To_Death/rwYxEAAAQBAJ?hl=en&gbpv=0',                   icon:'📖', color:'#4ade80', bg:'rgba(4,22,10,.93)'   },
   { label:'Itch.io',    sub:'games',      url:'https://manndevani.itch.io/',                                                                       icon:'🎮', color:'#ff6b1a', bg:'rgba(35,10,4,.93)'   },
   { label:'DeviantArt', sub:'gallery',    url:'https://www.deviantart.com/manndevani/gallery',                                                     icon:'🎨', color:'#b44fff', bg:'rgba(18,6,38,.93)'   },
@@ -6915,8 +6914,8 @@ function build() {
   // Arc centre is at .bubbles-root which is top:16% of unit
   // 220° to 320° tight arc above head
   const count    = LINKS.length;
-  const startDeg = 200;
-  const endDeg   = 340;
+  const startDeg = 205;
+  const endDeg   = 335;
   const step     = (endDeg - startDeg) / (count - 1);
 
   LINKS.forEach((lnk, i) => {
@@ -7354,7 +7353,6 @@ document.getElementById('hoverZone').addEventListener('touchend', e => {
     'GitHub':     'View source code & projects',
     'LinkedIn':   'Professional network',
     'YouTube':    'Videos & content',
-    'Portfolio':  'Full portfolio site',
     'Book':       'Life To Death — published work',
     'Itch.io':    'Games & experiments',
     'DeviantArt': 'Art gallery',
