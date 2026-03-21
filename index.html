@@ -67,10 +67,13 @@ body::after {
   0%,100%{box-shadow:0 0 0 0 rgba(245,197,24,.3)}
   50%{box-shadow:0 0 0 6px rgba(245,197,24,0)}
 }
-.hint-txt {
-  font-family:'Rajdhani',sans-serif;font-size:.65rem;
+.hint-txt { font-family:'Rajdhani',sans-serif;font-size:.65rem;
   letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(255,255,255,.28);white-space:nowrap;
+  color:rgba(255,255,255,.9);white-space:nowrap; }
+.hint-mobile { display:none; }
+@media (max-width:700px) {
+  .hint-desktop { display:none; }
+  .hint-mobile  { display:inline; }
 }
 
 /* ── STAGE ── */
@@ -124,11 +127,6 @@ body::after {
 }
 
 /* ── BUBBLES ── */
-/*
-  .bubbles-root is positioned at the character's head location.
-  It has zero size but overflow:visible so bubbles can go anywhere.
-  All bubbles are positioned relative to this anchor.
-*/
 .bubbles-root {
   position:absolute;
   top:30%;
@@ -141,7 +139,7 @@ body::after {
 
 .bubble {
   position:absolute;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   text-decoration:none;
   border:2px solid;
   border-radius:10px;
@@ -150,11 +148,11 @@ body::after {
   cursor:pointer;
   pointer-events:none;
   opacity:0;
-  /* default: collapsed at origin */
   transform:translate(var(--tx),var(--ty)) scale(0);
   transition:opacity .38s ease, transform .44s cubic-bezier(.34,1.56,.64,1);
   text-align:center;
-  /* center the box on the arc point */
+  overflow:hidden;
+  padding:4px 2px;
   margin-left:calc(var(--bw) / -2);
   margin-top:calc(var(--bh) / -2);
   width:var(--bw);
@@ -162,7 +160,6 @@ body::after {
   will-change:transform,opacity;
 }
 
-/* revealed */
 .char-unit.hovered .bubble {
   opacity:1;
   pointer-events:all;
@@ -170,25 +167,31 @@ body::after {
 }
 
 .bubble:hover {
-  filter:brightness(1.6);
+  filter:brightness(1.5);
   z-index:50;
-  transform:translate(var(--tx),var(--ty)) scale(1.1) !important;
+  transform:translate(var(--tx),var(--ty)) scale(1.12) !important;
 }
 .bubble:active { transform:translate(var(--tx),var(--ty)) scale(.93) !important; }
 
-.b-icon  { font-size:1.6rem;line-height:1;pointer-events:none; }
-.b-label { font-family:'Oswald',sans-serif;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;line-height:1;pointer-events:none;color:#fff; }
-.b-sub   { font-size:.5rem;letter-spacing:.06em;opacity:.7;line-height:1;pointer-events:none;color:#fff; }
+/* all text inside bubble is white always */
+.b-icon  { font-size:1.4rem;line-height:1;pointer-events:none;display:block; }
+.b-label { font-family:'Oswald',sans-serif;font-size:.6rem;letter-spacing:.08em;
+           text-transform:uppercase;line-height:1.1;pointer-events:none;
+           color:#fff !important;display:block;white-space:nowrap;
+           overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center; }
+.b-sub   { font-size:.44rem;letter-spacing:.04em;opacity:.65;line-height:1;
+           pointer-events:none;color:#fff !important;display:block; }
 
+/* dot connector tip above bubble */
 .bubble::before {
   content:'';
-  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
-  width:5px;height:5px;border-radius:50%;
-  background:currentColor;box-shadow:0 0 6px currentColor;
-  opacity:.85;pointer-events:none;
+  position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;
+  background:currentColor;box-shadow:0 0 5px currentColor;
+  opacity:.8;pointer-events:none;
 }
 
-/* connector SVG */
+/* connector SVG — hidden on mobile */
 .conn-svg {
   position:absolute;top:0;left:0;
   width:0;height:0;overflow:visible;
@@ -197,65 +200,83 @@ body::after {
 .conn-svg line { opacity:0;transition:opacity .38s; }
 .char-unit.hovered .conn-svg line { opacity:1; }
 
-/* ── MOBILE LINK GRID (shown on tap instead of arc) ── */
+/* ── MOBILE: hide arc entirely, show grid overlay ── */
+@media (max-width:700px) {
+  .bubbles-root { display:none; }
+  .conn-svg     { display:none; }
+}
+
+/* ── MOBILE GRID OVERLAY ── */
 .mob-grid {
   display:none;
   position:fixed;inset:0;z-index:500;
   align-items:center;justify-content:center;
-  background:rgba(0,0,0,.85);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
+  background:rgba(4,5,10,.92);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
   opacity:0;pointer-events:none;
-  transition:opacity .3s;
+  transition:opacity .28s;
 }
 .mob-grid.open { opacity:1;pointer-events:all; }
+
 .mob-inner {
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:10px;padding:20px;
-  width:min(340px,90vw);
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  padding:16px;
+  width:min(320px,88vw);
+  max-height:80vh;
+  overflow-y:auto;
 }
+
 .mob-btn {
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-  padding:12px 6px;border-radius:10px;
-  border:1.5px solid;text-decoration:none;
-  background:rgba(0,0,0,.7);
-  transition:filter .2s, transform .15s;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  padding:14px 4px 10px;
+  border-radius:10px;
+  border:1.5px solid;
+  text-decoration:none;
+  background:rgba(0,0,0,.75);
+  transition:transform .15s;
+  min-height:74px;
 }
 .mob-btn:active { transform:scale(.93); }
-.mob-btn .b-icon  { font-size:1.5rem;line-height:1; }
-.mob-btn .b-label { font-family:'Oswald',sans-serif;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:#fff;line-height:1; }
+.mob-btn-icon  { font-size:1.6rem;line-height:1;display:block; }
+.mob-btn-label {
+  font-family:'Oswald',sans-serif;
+  font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
+  color:#fff;line-height:1;display:block;
+  white-space:nowrap;
+}
+
 .mob-close {
-  position:absolute;top:16px;right:16px;
-  width:32px;height:32px;border-radius:50%;
-  border:1.5px solid rgba(245,197,24,.5);
-  background:rgba(0,0,0,.7);
-  color:var(--gold);font-size:1rem;
+  position:absolute;top:14px;right:14px;
+  width:34px;height:34px;border-radius:50%;
+  border:1.5px solid rgba(245,197,24,.45);
+  background:rgba(0,0,0,.8);
+  color:var(--gold);font-size:1.1rem;line-height:1;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;z-index:10;
 }
 
-@media (max-width:600px) {
+@media (max-width:700px) {
   .mob-grid { display:flex; }
-}
-
-@media (max-width:600px) {
   .char-unit {
-    height:min(62vh,440px);
-    width:calc(min(62vh,440px) * 0.654);
+    height:min(65vh,460px);
+    width:calc(min(65vh,460px) * 0.654);
   }
   .nameplate { top:8px;left:8px;padding:4px 10px 4px 8px; }
   .np-lbl  { font-size:.4rem; }
   .np-name { font-size:.82rem; }
   .wanted  { top:8px;right:8px;padding:4px 8px; }
   .star    { font-size:.6rem; }
-  .hc      { width:30px;height:30px; }
+  .hc      { width:28px;height:28px; }
   .htl     { top:6px;left:6px; }
   .htr     { top:6px;right:6px; }
   .hbl     { bottom:6px;left:6px; }
   .hbr     { bottom:6px;right:6px; }
-  .hint-wrap { bottom:12px; }
-  .hint-key  { width:22px;height:22px;font-size:.58rem; }
-  .hint-txt  { font-size:.55rem; }
+  .hint-wrap { bottom:14px; }
+  .hint-key  { width:24px;height:24px;font-size:.6rem; }
+  .hint-txt  { font-size:.56rem;letter-spacing:.15em; }
 }
 
 /* float keyframes — simple translateY, won't interfere with transform */
@@ -288,7 +309,8 @@ body::after {
 
 <div class="hint-wrap" id="hintWrap">
   <div class="hint-key">▲</div>
-  <span class="hint-txt">hover to reveal</span>
+  <span class="hint-txt hint-desktop">hover to reveal</span>
+  <span class="hint-txt hint-mobile">tap to reveal</span>
 </div>
 
 <div class="mob-grid" id="mobGrid">
@@ -6676,9 +6698,9 @@ function build() {
   const unitH = unit.offsetHeight;
   const unitW = unit.offsetWidth;
   const vw    = window.innerWidth;
-  const mob   = vw < 600;
-  const bW    = mob ? 44 : 64;
-  const bH    = mob ? 44 : 64;
+  const mob   = vw <= 700;
+  const bW    = mob ? 44 : 76;
+  const bH    = mob ? 44 : 76;
 
   // Head position in viewport coords
   const rect    = unit.getBoundingClientRect();
@@ -6785,14 +6807,13 @@ const mobGrid  = document.getElementById('mobGrid');
 const mobClose = document.getElementById('mobClose');
 const mobInner = document.getElementById('mobInner');
 
-// Populate grid once
 LINKS.forEach(lnk => {
   const a = document.createElement('a');
   a.className = 'mob-btn';
   a.href = lnk.url;
   if (lnk.url !== '#') { a.target='_blank'; a.rel='noopener noreferrer'; }
-  a.style.cssText = `border-color:${lnk.color};color:${lnk.color};box-shadow:0 0 12px ${lnk.color}33;`;
-  a.innerHTML = `<span class="b-icon">${lnk.icon}</span><span class="b-label">${lnk.label}</span>`;
+  a.style.cssText = `border-color:${lnk.color};color:${lnk.color};box-shadow:0 0 10px ${lnk.color}33;`;
+  a.innerHTML = `<span class="mob-btn-icon">${lnk.icon}</span><span class="mob-btn-label">${lnk.label}</span>`;
   mobInner.appendChild(a);
 });
 
@@ -6802,9 +6823,8 @@ function closeMobGrid() { mobGrid.classList.remove('open'); }
 mobClose.addEventListener('click', closeMobGrid);
 mobGrid.addEventListener('click', e => { if (e.target === mobGrid) closeMobGrid(); });
 
-// mobile tap
 unit.addEventListener('click', e => {
-  if (window.innerWidth > 600) return;
+  if (window.innerWidth > 700) return;
   openMobGrid();
 });
 
