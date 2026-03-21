@@ -7175,14 +7175,72 @@ document.getElementById('hoverZone').addEventListener('touchend', e => {
     ctx.fillStyle = grd;
     ctx.fillRect(0, H*.72, W, H*.28);
 
-    // Ground strip
-    const gr2 = ctx.createLinearGradient(0, H*.91, 0, H);
-    gr2.addColorStop(0, '#0b0906');
-    gr2.addColorStop(1, '#131008');
-    ctx.fillStyle = gr2;
-    ctx.fillRect(0, H*.91, W, H*.09);
-    ctx.fillStyle = 'rgba(255,110,18,.16)';
-    ctx.fillRect(0, H*.91, W, 1);
+    // ── ROAD ──
+    const roadTop    = H * .905;
+    const roadH      = H * .095;
+    const kerbH      = 3;
+    const pavementH  = H * .018;
+    const laneY      = roadTop + roadH * .5; // centre line
+
+    // Pavement / sidewalk above road
+    ctx.fillStyle = '#0e0d0b';
+    ctx.fillRect(0, roadTop - pavementH, W, pavementH);
+    // pavement edge detail
+    ctx.fillStyle = 'rgba(255,140,30,.08)';
+    ctx.fillRect(0, roadTop - pavementH, W, 1);
+
+    // Kerb top
+    ctx.fillStyle = '#1a1714';
+    ctx.fillRect(0, roadTop - kerbH, W, kerbH);
+    ctx.fillStyle = 'rgba(255,255,255,.05)';
+    ctx.fillRect(0, roadTop - kerbH, W, 1);
+
+    // Road asphalt — two lanes
+    const roadGrad = ctx.createLinearGradient(0, roadTop, 0, roadTop + roadH);
+    roadGrad.addColorStop(0,   '#141210');
+    roadGrad.addColorStop(.5,  '#111009');
+    roadGrad.addColorStop(1,   '#0d0b08');
+    ctx.fillStyle = roadGrad;
+    ctx.fillRect(0, roadTop, W, roadH);
+
+    // Wet road reflections — shimmer from building lights
+    const refGrad = ctx.createLinearGradient(0, roadTop, 0, roadTop + roadH);
+    refGrad.addColorStop(0,   'rgba(255,110,20,.07)');
+    refGrad.addColorStop(.4,  'rgba(255,140,40,.04)');
+    refGrad.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = refGrad;
+    ctx.fillRect(0, roadTop, W, roadH);
+
+    // Reflection streaks (vertical shimmer pools)
+    [.15,.28,.44,.6,.73,.87].forEach(fx => {
+      const rx = fx * W + (mouse.x - .5) * 8;
+      const rg = ctx.createRadialGradient(rx, roadTop + roadH*.3, 0, rx, roadTop + roadH*.3, 30);
+      rg.addColorStop(0,   'rgba(255,180,60,.06)');
+      rg.addColorStop(1,   'transparent');
+      ctx.fillStyle = rg;
+      ctx.fillRect(rx - 30, roadTop, 60, roadH * .6);
+    });
+
+    // Centre dashed line
+    ctx.save();
+    ctx.setLineDash([18, 14]);
+    ctx.strokeStyle = 'rgba(255,220,0,.35)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, laneY);
+    ctx.lineTo(W, laneY);
+    ctx.stroke();
+    ctx.restore();
+
+    // Edge lane lines (solid white)
+    ctx.strokeStyle = 'rgba(255,255,255,.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, roadTop + 2);       ctx.lineTo(W, roadTop + 2);       ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, roadTop + roadH - 2); ctx.lineTo(W, roadTop + roadH - 2); ctx.stroke();
+
+    // Road bottom shadow
+    ctx.fillStyle = 'rgba(0,0,0,.4)';
+    ctx.fillRect(0, roadTop + roadH - 4, W, 4);
 
     // Rain — faint diagonal streaks
     ctx.save();
@@ -7399,18 +7457,23 @@ document.getElementById('hoverZone').addEventListener('touchend', e => {
   const cvs = document.getElementById('bgCanvas');
   const ctx = cvs.getContext('2d');
 
-  const CARS = Array.from({length:5}, (_, i) => ({
+  const CARS = Array.from({length:6}, (_, i) => ({
     x:    Math.random(),
-    y:    0.918 + Math.random() * .03,
-    spd:  (.0006 + Math.random()*.001) * (Math.random()<.5?1:-1),
+    // alternate lanes: top lane (going right) and bottom lane (going left)
+    lane: i % 2,
+    spd:  (.0005 + Math.random()*.0009) * (i % 2 === 0 ? 1 : -1),
     col:  Math.random()<.7 ? '#fff8e0' : '#ffe0b0',
     tail: Math.random()<.5 ? '#ff2200' : '#cc1100',
   }));
 
   function drawCar(c) {
     const W = cvs.width, H = cvs.height;
+    const roadTop = H * .905;
+    const roadH   = H * .095;
+    const laneY   = roadTop + roadH * .5;
+    // lane 0 = top half (going right), lane 1 = bottom half (going left)
+    const cy = c.lane === 0 ? laneY - roadH * .18 : laneY + roadH * .18;
     const cx = c.x * W;
-    const cy = c.y * H;
     const dir = c.spd > 0 ? 1 : -1;
 
     // Car dimensions
