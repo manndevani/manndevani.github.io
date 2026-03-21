@@ -100,11 +100,11 @@ body::after {
   position:absolute;
   bottom:0;
   left:50%;transform:translateX(-50%);
-  /* wide enough to cover bubbles left/right, tall enough to cover arc above */
   width:200%;
   height:160%;
   z-index:5;
   top:auto;
+  cursor:pointer;
 }
 
 .char-svg-wrap {
@@ -6783,24 +6783,25 @@ const unit     = document.getElementById('charUnit');
 const hintWrap = document.getElementById('hintWrap');
 let hoverTimer;
 
+const isMobile = () => window.innerWidth <= 700 || ('ontouchstart' in window);
+
 function setHovered(on) {
   clearTimeout(hoverTimer);
   if (on) {
     unit.classList.add('hovered');
     hintWrap.style.opacity = '0';
-    // start float animations
     unit.querySelectorAll('.bubble').forEach(b => b.style.animationPlayState='running');
   } else {
     hoverTimer = setTimeout(() => {
       unit.classList.remove('hovered');
       hintWrap.style.opacity = '1';
       unit.querySelectorAll('.bubble').forEach(b => b.style.animationPlayState='paused');
-    }, 120); // small grace period so mouse can move onto bubbles
+    }, 120);
   }
 }
 
-unit.addEventListener('mouseenter', () => setHovered(true));
-unit.addEventListener('mouseleave', () => setHovered(false));
+unit.addEventListener('mouseenter', () => { if (!isMobile()) setHovered(true); });
+unit.addEventListener('mouseleave', () => { if (!isMobile()) setHovered(false); });
 
 // ── Mobile grid
 const mobGrid  = document.getElementById('mobGrid');
@@ -6820,15 +6821,26 @@ LINKS.forEach(lnk => {
 function openMobGrid()  { mobGrid.classList.add('open'); }
 function closeMobGrid() { mobGrid.classList.remove('open'); }
 
-mobClose.addEventListener('click', closeMobGrid);
+mobClose.addEventListener('click', e => { e.stopPropagation(); closeMobGrid(); });
 mobGrid.addEventListener('click', e => { if (e.target === mobGrid) closeMobGrid(); });
 
+// tap on character — works on both touch and click
+unit.addEventListener('touchend', e => {
+  if (!isMobile()) return;
+  e.preventDefault();
+  openMobGrid();
+});
 unit.addEventListener('click', e => {
-  if (window.innerWidth > 700) return;
+  if (!isMobile()) return;
   openMobGrid();
 });
 
-// ── INTERACTIVE CANVAS BACKGROUND ──
+// also catch taps on the hover-zone overlay
+document.getElementById('hoverZone').addEventListener('touchend', e => {
+  if (!isMobile()) return;
+  e.preventDefault();
+  openMobGrid();
+});
 (function(){
   const cvs = document.getElementById('bgCanvas');
   const ctx = cvs.getContext('2d');
