@@ -6951,7 +6951,6 @@ function build() {
     const a = document.createElement('a');
     a.className = 'bubble';
     a.href = lnk.url;
-    if (lnk.url !== '#') { a.target='_blank'; a.rel='noopener noreferrer'; }
     a.style.cssText = `
       --tx:${tx}px; --ty:${ty}px;
       --bw:${bW}px; --bh:${bH}px;
@@ -7010,7 +7009,6 @@ LINKS.forEach(lnk => {
   const a = document.createElement('a');
   a.className = 'mob-btn';
   a.href = lnk.url;
-  if (lnk.url !== '#') { a.target='_blank'; a.rel='noopener noreferrer'; }
   a.style.cssText = `border-color:${lnk.color};color:${lnk.color};box-shadow:0 0 10px ${lnk.color}33;`;
   a.innerHTML = `<span class="mob-btn-icon">${lnk.icon}</span><span class="mob-btn-label">${lnk.label}</span>`;
   mobInner.appendChild(a);
@@ -7569,8 +7567,15 @@ document.getElementById('hoverZone').addEventListener('touchend', e => {
   let ctx;
   function getCtx() {
     if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
     return ctx;
   }
+
+  // Browsers only allow audio to start after a real user gesture (click/keydown/touch),
+  // not hover — unlock the context on the first such gesture so the very first hover sound works.
+  ['pointerdown','keydown','touchstart'].forEach(evt => {
+    document.addEventListener(evt, () => getCtx(), { once: true, passive: true });
+  });
 
   function blip(freq=880, dur=0.06, vol=0.08, type='sine') {
     try {
