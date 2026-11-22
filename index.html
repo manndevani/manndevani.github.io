@@ -310,19 +310,19 @@ body::after {
 #intro.reveal .intro-loc { opacity:1; }
 
 /* ── CUSTOM CURSOR ── */
-body, *,
-*::before, *::after,
-a, button, input, [role="button"] { cursor:none !important; }
+/* system cursor is hidden only once a real mouse has moved (see JS) */
+html.custom-cursor body, html.custom-cursor *,
+html.custom-cursor *::before, html.custom-cursor *::after { cursor:none !important; }
 #cursor {
   position:fixed;z-index:99999;pointer-events:none;
   width:32px;height:32px;
   transform:translate(-50%,-50%);
   transition:transform .08s;
-  cursor:none !important;
+  display:none;
 }
+html.custom-cursor #cursor { display:block; }
 #cursor svg { width:100%;height:100%; }
 #cursor.clicking { transform:translate(-50%,-50%) scale(.85); }
-@media (hover:none) { #cursor { display:none; } }
 
 /* ── TOOLTIP ── */
 #tooltip {
@@ -7308,9 +7308,17 @@ document.getElementById('hoverZone').addEventListener('touchend', e => {
 // ── CUSTOM CURSOR ──
 (function(){
   const cur = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
+  const root = document.documentElement;
+  document.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
     cur.style.left = e.clientX + 'px';
     cur.style.top  = e.clientY + 'px';
+    root.classList.add('custom-cursor');
+  });
+  // hand back the system cursor when the mouse leaves the window or on touch
+  document.addEventListener('mouseleave', () => root.classList.remove('custom-cursor'));
+  document.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse') root.classList.remove('custom-cursor');
   });
   document.addEventListener('mousedown', () => cur.classList.add('clicking'));
   document.addEventListener('mouseup',   () => cur.classList.remove('clicking'));
